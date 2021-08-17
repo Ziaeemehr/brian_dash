@@ -1,0 +1,10 @@
+build/
+dist/
+.vscode/
+__pycache__/
+jitcsim.egg-info/
+.ipynb_checkpoints/
+brian_dash.egg-info/
+*.txt
+*.png
+*.so

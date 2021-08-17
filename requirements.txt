@@ -1,0 +1,7 @@
+dash-bootstrap-components
+brian2
+numpy
+scipy
+cython
+dash
+pandas
