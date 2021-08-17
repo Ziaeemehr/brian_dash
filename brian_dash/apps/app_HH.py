@@ -95,12 +95,12 @@ app.layout = dbc.Container(
 
         html.Br(),
 
-        dbc.Row(
-            [dbc.Col([dbc.Button("Submit", id="submit-val",
-                                 n_clicks=0, className="mr-2")],
-                     width={'size': 3, 'offset': 1}),
-             ], justify='left',
-        ),
+        # dbc.Row(
+        #     [dbc.Col([dbc.Button("Submit", id="submit-val",
+        #                          n_clicks=0, className="mr-2")],
+        #              width={'size': 3, 'offset': 1}),
+        #      ], justify='left',
+        # ),
         dbc.Row([dbc.Col([html.Div(
             children=dcc.Graph(
                 id="voltage-trace",
@@ -115,16 +115,18 @@ app.layout = dbc.Container(
 @ app.callback(
     Output('voltage-trace', 'figure'),
     # Output("gate-trace", "figure"),
-    [Input("submit-val", "n_clicks")],
-    state=[
-        State("datatable-params", "derived_virtual_data")
-    ]
+    # [Input("submit-val", "n_clicks")],
+    # state=[
+    #     State("datatable-params", "derived_virtual_data")
+    # ]
+    Input("datatable-params", "derived_virtual_data")
+    
     # prevent_initial_call = True
 )
-def update_output_div(n, par):
+def update_output_div(par):
 
-    if (n is None) or (n == 0):
-        raise PreventUpdate
+    # if (n is None) or (n == 0):
+    #     raise PreventUpdate
 
     df_par = pd.DataFrame(par)
     t_end = int(filter_df(df_par, "t_end"))

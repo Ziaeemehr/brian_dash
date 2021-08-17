@@ -1,0 +1,13 @@
+parameter,unit,value
+El,mV,-59
+Ek,mV,-82
+Ena,mV,45
+gl,mS,0.3
+gk,mS,36
+gna,mS,120
+C,ufarad,1
+v0,mV,-70
+t_start,ms,50
+t_end,ms,150
+amplitude,uA,7
+t_simulation,ms,200
