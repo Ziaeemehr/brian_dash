@@ -240,7 +240,7 @@ def update_output(table_par, table_current, value):
     if None in list_par:
         raise PreventUpdate
     else:
-        fig = go.Figure()
+        # fig = go.Figure()
         data = simulate_HH_neuron(df_par, current, t_simulation * b2.ms)
         fig = make_subplots(rows=3, cols=1, shared_xaxes=True,
                             vertical_spacing=0.1, x_title="Time (ms)")
@@ -261,4 +261,4 @@ def update_output(table_par, table_current, value):
 
 
 if __name__ == "__main__":
-    app.run_server(debug=True, port=8000)
+    app.run_server(debug=False, port=8000)
