@@ -3,7 +3,7 @@ import brian2 as b2
 import pandas as pd
 from time import time
 # import pylab as plt
-from brian_dash.input_factory import get_step_current
+from brian_dash.input_factory import *
 
 # import matplotlib.pyplot as plt
 b2.prefs.codegen.target = 'numpy'
@@ -35,7 +35,7 @@ b2.prefs.codegen.target = 'numpy'
 
 #     plt.show()
 
-def filter_df(df, label):
+def filter_dataframe(df, label):
     """
     filter dataframe
 
@@ -46,13 +46,18 @@ def filter_df(df, label):
         input pandas dataframe
     label :str
         parameter name to be filtered
-    
+
     return : float
         value of the filtered parameter
 
     """
-    value = df.loc[df['parameter'] == label]["value"].values[0]
-    return value
+    df0 = df.copy()
+
+    value = df0.loc[df0['parameter'] == label]["value"].values
+    if len(value > 0):
+        return value[0]
+    else:
+        return None
 
 
 def simulate_HH_neuron(par, input_current, simulation_time):
@@ -68,16 +73,15 @@ def simulate_HH_neuron(par, input_current, simulation_time):
         ["vm", "I_e", "m", "n", "h"]
     """
 
-
     # neuron parameters
-    El = filter_df(par, "El") * b2.mV
-    Ek = filter_df(par, "Ek") * b2.mV
-    Ena = filter_df(par, "Ena") * b2.mV
-    gl = filter_df(par, "gl") * b2.msiemens
-    gk = filter_df(par, "gk") * b2.msiemens
-    gna = filter_df(par, "gna") * b2.msiemens
-    C = filter_df(par, "C") * b2.ufarad
-    v0 = filter_df(par, "v0") * b2.mV
+    El = filter_dataframe(par, "El") * b2.mV
+    Ek = filter_dataframe(par, "Ek") * b2.mV
+    Ena = filter_dataframe(par, "Ena") * b2.mV
+    gl = filter_dataframe(par, "gl") * b2.msiemens
+    gk = filter_dataframe(par, "gk") * b2.msiemens
+    gna = filter_dataframe(par, "gna") * b2.msiemens
+    C = filter_dataframe(par, "C") * b2.ufarad
+    v0 = filter_dataframe(par, "v0") * b2.mV
 
     # forming HH model with differential equations
     eqs = """
@@ -122,7 +126,7 @@ def simulate_HH_neuron(par, input_current, simulation_time):
     m = state_monitor.m[0]
     n = state_monitor.n[0]
     h = state_monitor.h[0]
-    I = state_monitor.I_e
+    I = state_monitor.I_e[0]
 
     return {"t": t,
             "v": v,
@@ -136,8 +140,11 @@ if __name__ == "__main__":
 
     start = time()
     par = pd.read_csv("HH.csv")
-    current = get_step_current(0, 200, b2.ms, 7.0 * b2.uA)
+    # current = get_step_current(0, 200, b2.ms, 7.0 * b2.uA)
+    # current = get_ramp_current(0,200, b2.ms, 2.*b2.uA, 7.*b2.uA)
+    current = get_sinusoidal_current(0, 200, b2.ms, 3*b2.uA, 10*b2.Hz, 2*b2.uA)
     data = state_monitor = simulate_HH_neuron(par, current, 200 * b2.ms)
     print("done in {} seconds.".format(time() - start))
+    print(data['I'])
     # print(np.diff(data['t']))
     # plot_data(state_monitor, title="HH Neuron")

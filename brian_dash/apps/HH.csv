@@ -1,13 +1,18 @@
-parameter,unit,value
-El,mV,-59
-Ek,mV,-82
-Ena,mV,45
-gl,mS,0.3
-gk,mS,36
-gna,mS,120
-C,ufarad,1
-v0,mV,-70
-t_start,ms,50
-t_end,ms,150
-amplitude,uA,7
-t_simulation,ms,200
+parameter,unit,value,category,step,ramp,sin
+El,mV,-59,par,,,
+Ek,mV,-82,par,,,
+Ena,mV,45,par,,,
+gl,mS,0.3,par,,,
+gk,mS,36,par,,,
+gna,mS,120,par,,,
+C,ufarad,1,par,,,
+v0,mV,-70,par,,,
+simulation time,ms,200,par,,,
+start time,ms,50,cur,1,1,1
+end time,ms,150,cur,1,1,1
+amplitude,uA,7,cur,1,,1
+amplitude start,uA,2,cur,,1,
+amplitude end,uA,10,cur,,1,
+frequency,Hz,10,cur,,,1
+direct current,uA,0,cur,,,1
+phase offset,radian,0,cur,,,1
