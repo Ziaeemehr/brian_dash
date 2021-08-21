@@ -13,8 +13,7 @@ from brian_dash.models.HH import simulate_HH_neuron, filter_dataframe
 from brian_dash.input_factory import (
     get_step_current,
     get_ramp_current,
-    get_sinusoidal_current,
-    get_zero_current)
+    get_sinusoidal_current)
 from plotly.subplots import make_subplots
 
 
@@ -184,8 +183,8 @@ def update_current_table(value):
 @ app.callback(
     Output('voltage-trace', 'figure'),
     [Input("datatable-params", "derived_virtual_data"),
-     Input("datatable-current", "derived_virtual_data"),
-     Input("dropdown1", "value")],
+     Input("datatable-current", "derived_virtual_data")],
+    [State("dropdown1", "value")],
     prevent_initial_call=False
 )
 def update_output(table_par, table_current, value):
@@ -204,8 +203,7 @@ def update_output(table_par, table_current, value):
         amplitude = filter_dataframe(df_c, "amplitude")
         list_par.append(amplitude)
 
-        if None not in list_par:
-            current = get_step_current(t_start, t_end, b2.ms, amplitude*b2.uA)
+        current = get_step_current(t_start, t_end, b2.ms, amplitude*b2.uA)
 
     elif idx == 2:
 
@@ -213,11 +211,10 @@ def update_output(table_par, table_current, value):
         amplitude_end = filter_dataframe(df_c, "amplitude end")
         list_par.extend([amplitude_start, amplitude_end])
 
-        if None not in list_par:
-            current = get_ramp_current(t_start, t_end,
-                                       b2.ms,
-                                       amplitude_start*b2.uA,
-                                       amplitude_end*b2.uA)
+        current = get_ramp_current(t_start, t_end,
+                                   b2.ms,
+                                   amplitude_start*b2.uA,
+                                   amplitude_end*b2.uA)
 
     else:
         frequency = filter_dataframe(df_c, "frequency")
@@ -227,37 +224,31 @@ def update_output(table_par, table_current, value):
         list_par.extend([frequency, direct_current,
                          phase_offset, amplitude])
 
-        if None not in list_par:
-            current = get_sinusoidal_current(t_start,
-                                             t_end,
-                                             b2.ms,
-                                             amplitude*b2.uA,
-                                             frequency*b2.Hz,
-                                             direct_current*b2.uA,
-                                             phase_offset)
+        current = get_sinusoidal_current(t_start,
+                                         t_end,
+                                         b2.ms,
+                                         amplitude*b2.uA,
+                                         frequency*b2.Hz,
+                                         direct_current*b2.uA,
+                                         phase_offset)
 
-    
-    if None in list_par:
-        raise PreventUpdate
-    else:
-        # fig = go.Figure()
-        data = simulate_HH_neuron(df_par, current, t_simulation * b2.ms)
-        fig = make_subplots(rows=3, cols=1, shared_xaxes=True,
-                            vertical_spacing=0.1, x_title="Time (ms)")
-        fig.add_trace(go.Scatter(x=data['t'], y=data['v'], mode='lines',
-                                 name='V'), row=1, col=1)
-        fig.add_trace(go.Scatter(x=data['t'], y=data['h'], mode='lines',
-                                 name='h'), row=2, col=1)
-        fig.add_trace(go.Scatter(x=data['t'], y=data['n'], mode='lines',
-                                 name='n'), row=2, col=1)
-        fig.add_trace(go.Scatter(x=data['t'], y=data['m'], mode='lines',
-                                 name='m'), row=2, col=1)
-        fig.add_trace(go.Scatter(x=data['t'], y=data['I'], mode='lines',
-                                 name="I"), row=3, col=1)
-        fig.update_layout(autosize=False,
-                          width=1500,
-                          height=700)
-        return fig
+    data = simulate_HH_neuron(df_par, current, t_simulation * b2.ms)
+    fig = make_subplots(rows=3, cols=1, shared_xaxes=True,
+                        vertical_spacing=0.1, x_title="Time (ms)")
+    fig.add_trace(go.Scatter(x=data['t'], y=data['v'], mode='lines',
+                             name='V'), row=1, col=1)
+    fig.add_trace(go.Scatter(x=data['t'], y=data['h'], mode='lines',
+                             name='h'), row=2, col=1)
+    fig.add_trace(go.Scatter(x=data['t'], y=data['n'], mode='lines',
+                             name='n'), row=2, col=1)
+    fig.add_trace(go.Scatter(x=data['t'], y=data['m'], mode='lines',
+                             name='m'), row=2, col=1)
+    fig.add_trace(go.Scatter(x=data['t'], y=data['I'], mode='lines',
+                             name="I"), row=3, col=1)
+    fig.update_layout(autosize=False,
+                      width=1500,
+                      height=700)
+    return fig
 
 
 if __name__ == "__main__":
